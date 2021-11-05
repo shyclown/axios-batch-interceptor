@@ -1,7 +1,121 @@
-# Getting Started with Create React App
+# Axios Batch Interceptor Example
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+##Mock server
+In project s crated simple mock server that will let you test the batching function. 
+However you will need ot make some changes
+```ts
+// /src/utils/axios/index.ts
+
+// Uncoment this baseUrl and remove default baseURL in the same file
+const baselURL = 'http://localhost:8000/';
+```
+After this change when you start the server `npm run start` axios will request data from your local server which is set 
+up to work with the example
+```nodejs
+node server
+```
+
+#How to create custom batch interceptor
+## Custom batch interceptors
+
+Custom batch interceptor requires two functions and one config object. New batch interceptor is created by calling
+`addCustomBatchInterceptor` function.
+
+```ts
+const client = (): AxiosInstance => {
+    const config = {
+        baseURL,
+        headers: {}
+    };
+    const instance = axios.create(config);
+    
+    addCustomBatchInterceptor(instance, batchingConfig); // <--- Custom Batching Interceptor
+    
+    addResponseInterceptor(instance); // Response interceptor to clean up cancellation errors
+
+    return instance;
+};
+
+const apiClient = client();
+```
+
+```ts
+export const addCustomBatchInterceptor = (
+    instance: AxiosInstance,
+    batchingConfig: BatchingConfig // <-- Batching config
+) => addBatchInterceptor(
+    instance,
+    batchingConfig
+)(
+    handleCustomBatching, // <-- Funciton that handles batching
+    resolveCustomBatch // <-- Function that creates final request config
+);
+```
+
+### Batching config
+You need to specify the batching interval and endpoints which should be batched. 
+This config needs to be passed to Interceptor as shown above.
+```ts
+const batchingConfig: BatchingConfig = {
+    timeout: 300,
+    // setup which endpoints should be batching
+    urls: [{method: 'get', url: '/api/files/batch'}],
+}
+```
+
+### Handle Batching Function
+Handle batching function is executed every time when request is made. You can capture request data in this 
+function
+```ts
+export type HandleBatching = (
+    requestConfig: AxiosRequestConfig,
+    storage?: any 
+) => void;
+
+const storedDataByUrl = {}; // <-- store batched data
+
+const handleCustomBatching: HandleBatching = (requestConfig, storage) => {
+    // You can use local storage or you can use the Batch Interceptor storage
+    // but you will need to be carefull and use only [requestConfig.url] as key
+}
+```
+### Resolve Batch Function
+The resolve batch function is executed once when batching after timeout, in this function you can use the stored data 
+and manipulate final request that will be sent to server. Function needs to return Axios config.
+```ts
+export type ResolveBatchConfig = (
+    requestConfig: AxiosRequestConfig,
+    storage?: any
+) => AxiosRequestConfig;
+
+const resolveCustomBatch: ResolveBatchConfig = (
+    requestConfig,
+    storage // <-- not used in this example
+) => {
+    const url = requestConfig.url as string;
+
+    // Final update of executed config example with ids array in get method
+    return {
+        ...requestConfig,
+        params: {
+            ...requestConfig.params,
+            ids: [...storedDataByUrl[url]]
+        }
+    };
+
+    // You should clean up batch here and then return config, but
+    // If storage is used it will be cleaned up automatically
+    // Example:
+    
+    //   const newConfig = {...new data}
+    //   delete storedDataByUrl[url]; <-- clean up after data is used in new config
+    //  return newConfig;
+    
+
+}
+```
 ## Available Scripts
 
 In the project directory, you can run:
@@ -11,35 +125,7 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
+### Learn More about React
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 

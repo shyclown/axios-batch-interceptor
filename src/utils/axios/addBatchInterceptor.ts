@@ -9,6 +9,7 @@ const CancelToken = axios.CancelToken;
 // TODO: Improve batch storage so it is fully managed by BatchInterceptor
 const batchedDataByUrl: { [key: string]: any } = {};
 
+// Simple check if route should be batched
 const requestShouldBeBatched = (
     requestConfig: AxiosRequestConfig,
     batchingConfig: BatchingConfig
