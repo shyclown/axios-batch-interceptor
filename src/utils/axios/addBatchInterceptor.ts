@@ -34,13 +34,12 @@ export const addBatchInterceptor: UseBatchInterceptor = (
             const url = requestConfig.url as string;
 
             // Check if url should be batched
-            if (
-                !requestShouldBeBatched(requestConfig, batchingConfig)
-            ) {
+            if (!requestShouldBeBatched(requestConfig, batchingConfig)) {
                 return requestConfig;
             }
 
             if (batchedDataByUrl[url]) {
+
                 // Batching is already in progress -> we execute batching function
                 handleBatching(requestConfig, batchedDataByUrl);
 
@@ -51,6 +50,7 @@ export const addBatchInterceptor: UseBatchInterceptor = (
                 }
             } else {
 
+                // Batching in progress -> we execute batching function
                 handleBatching(requestConfig, batchedDataByUrl);
 
                 // Execute request with delay
@@ -62,6 +62,7 @@ export const addBatchInterceptor: UseBatchInterceptor = (
                     // Clean up storage
                     delete batchedDataByUrl[url];
                     resolve(updatedConfig);
+
                 }, batchingConfig.timeout));
             }
         }, (error) => {
