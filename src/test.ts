@@ -15,4 +15,10 @@ const runTest = () => {
     apiClient.get(batchUrl, {params: {ids: ["fileid3"]}});
 }
 
+export const runTestReject = () => {
+    const batchUrl = "/api/files/batch";
+    // Should reject as the fileid3 is missing from the response
+    apiClient.get(batchUrl, {params: {ids: ["fileid3"]}});
+}
+
 export default runTest;
