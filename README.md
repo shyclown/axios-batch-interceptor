@@ -82,7 +82,7 @@ const handleCustomBatching: HandleBatching = (requestConfig, storage) => {
 }
 ```
 ### Resolve Batch Function
-The resolve batch function is executed once when batching after timeout, in this function you can use the stored data 
+The resolve batch function is executed once when the batching ends after the timeout, in this function you can use the stored data 
 and manipulate final request that will be sent to server. Function needs to return Axios config.
 ```ts
 export type ResolveBatchConfig = (
