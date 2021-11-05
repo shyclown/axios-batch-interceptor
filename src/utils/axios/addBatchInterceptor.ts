@@ -15,14 +15,10 @@ const requestShouldBeBatched = (
     batchingConfig: BatchingConfig
 ) => {
     // Check if url should be batched
-    const shouldBatch = (batchingConfig?.urls?.find(batch =>
+    return (batchingConfig?.urls?.find(batch =>
         batch.method === requestConfig.method &&
         batch.url === requestConfig.url
     ));
-    if (!shouldBatch) {
-        console.log("Request should not be batched", batchingConfig.urls[0].url, requestConfig.url)
-    }
-    return shouldBatch;
 }
 
 export const addBatchInterceptor: UseBatchInterceptor = (
