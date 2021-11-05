@@ -17,7 +17,7 @@ up to work with the example
 node server
 ```
 
-#How to create custom batch interceptor
+# How to create custom batch interceptor
 ## Custom batch interceptors
 
 Custom batch interceptor requires two functions and one config object. New batch interceptor is created by calling
