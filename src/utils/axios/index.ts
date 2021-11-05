@@ -6,7 +6,7 @@ import {BatchingConfig} from "./_types";
 const baseURL = 'https://europe-west1-quickstart-1573558070219.cloudfunctions.net/file-batch-api';
 
 // local server can be run by command: "node server"
-// const baselURL = 'http://localhost:8000/';
+// const baseURL = 'http://localhost:8000/';
 
 const batchingConfig: BatchingConfig = {
     timeout: 300,
