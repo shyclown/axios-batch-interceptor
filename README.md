@@ -2,9 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-##Mock server
-In project s crated simple mock server that will let you test the batching function. 
-However you will need ot make some changes
+## Mock server
+In the project was crated simple mock server that will let you test the batching function. 
+However you will need ot make some changes for it to work.
 ```ts
 // /src/utils/axios/index.ts
 
