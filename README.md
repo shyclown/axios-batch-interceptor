@@ -40,7 +40,7 @@ const client = (): AxiosInstance => {
 
 const apiClient = client();
 ```
-
+Add custom interceptor is wrapper for universal `addBatchInterceptor` to which we send customised functions and config.
 ```ts
 export const addCustomBatchInterceptor = (
     instance: AxiosInstance,
